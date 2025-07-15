@@ -1,0 +1,79 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+ provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  // directUrl = env("DIRECT_URL")
+}
+
+// model Region {
+//   id                Int      @id @default(autoincrement())
+//   name              String   @unique
+//   capital           String
+//   population        Int?
+//   areaKm2           Float?   @map("area_km2")
+//   languages         String[] 
+//   administrationType String   @map("administration_type")
+//   latitude          Float?
+//   longitude         Float?
+//   flag              String?  
+//   image             String?  
+//   images            String[] 
+//   createdAt         DateTime  @default(now())
+//   updatedAt         DateTime  @updatedAt
+//   zones            Zone[]   
+// }
+
+// model Zone {
+//   id          Int      @id @default(autoincrement())
+//   name        String   @unique
+//   regionId    Int
+//   region      Region   @relation(fields: [regionId], references: [id])
+//   population  Int?
+//   areaKm2     Float?   @map("area_km2")
+//   latitude    Float?
+//   longitude   Float?
+//   createdAt   DateTime @default(now())
+//   updatedAt   DateTime @updatedAt
+//    @@unique([regionId, name])
+// }
+
+
+model foods{
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String?
+  image       String?
+  price       Float?
+  images     String[] @default([])
+  isAvailable Boolean  @default(true)
+  category     categories? @relation(fields: [categoryId], references: [id])
+  categoryId Int?
+  tags          String[]    @default([])
+  rating        Float       @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  ingredients String[] @default([])
+  
+}
+
+model categories{
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String?
+  slug        String   @unique
+  image       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  foods       foods[] 
+}
+
+
