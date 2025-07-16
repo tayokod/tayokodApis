@@ -18,7 +18,7 @@ model Region {
   id                Int      @id @default(autoincrement())
   name              String   @unique
   capital           String
-  population        Int?
+  population        String?
   areaKm2           Float?   @map("area_km2")
   languages         String[] 
   administrationType String   @map("administration_type")
