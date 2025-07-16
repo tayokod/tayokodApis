@@ -20,10 +20,11 @@ model Region {
   capital           String
   population        String?
   areaKm2           Float?   @map("area_km2")
+  populationDensity Float?   @map("population_density")
   languages         String[] 
   administrationType String   @map("administration_type")
-  latitude          Float?
-  longitude         Float?
+  latitude          String?
+  longitude         String?
   flag              String?  
   image             String?  
   images            String[] 
