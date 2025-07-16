@@ -77,3 +77,27 @@ export const PostFoodsController = async (req, res) => {
 }
 
 
+// get food by id
+
+export const GetFoodByIdController = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const food = await prisma.foods.findUnique({
+            where: { id: +id },
+            include: {
+                category: true,
+            },
+        });
+
+        if (!food) {
+            return res.status(404).json({ error: 'Food not found' });
+        }
+
+        res.json(food);
+    } catch (error) {
+        console.error('Error fetching food by ID:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
+

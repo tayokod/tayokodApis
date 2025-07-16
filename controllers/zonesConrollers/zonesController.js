@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 
 
 // get all zones
-app.get('/zones', async (req, res) => {
+export const getAllZones = async (req, res) => {
     try {
         const zones = await prisma.zone.findMany({
             include: {
@@ -16,12 +16,12 @@ app.get('/zones', async (req, res) => {
         console.error('Error fetching zones:', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
-});
+};
 
 
 
 // register a zone
-app.post('/zones', async (req, res) => {
+export const registerZone = async (req, res) => {
     const { name, regionId, population, areaKm2, latitude, longitude } = req.body;
     
     try {
@@ -40,4 +40,4 @@ app.post('/zones', async (req, res) => {
         console.error('Error creating zone:', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
-});
+};

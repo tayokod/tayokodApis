@@ -18,6 +18,16 @@ import categoriesRoutes from '../routes/categoreisRoutes/categoriesRoute.js';
 app.use('/api', categoriesRoutes);
 
 
+// importing regions routes
+import regionsRoutes from '../routes/regionsRoutes/regionsRoute.js';
+app.use('/api', regionsRoutes);
+
+
+// importing zones routes
+import zonesRoutes from '../routes/zonesRoutes/zonesRoute.js';
+app.use('/api', zonesRoutes);
+
+
 
 app.listen(PORT, () => {
     console.log(`http://localhost:${PORT}`);

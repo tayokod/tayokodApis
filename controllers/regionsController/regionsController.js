@@ -1,4 +1,3 @@
-
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
@@ -9,7 +8,7 @@ const prisma = new PrismaClient();
 
 
 // Get all regions
-app.get('/regions', async (req, res) => {
+ export const GetRegionsController = async (req, res) => {
     try {
         const regions = await prisma.region.findMany({
             include: {
@@ -21,11 +20,11 @@ app.get('/regions', async (req, res) => {
         console.error('Error fetching regions:', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
-});
+};
 
 
 // post a new region
-app.post('/regions', async (req, res) => {
+export const PostRegionsController = async (req, res) => {
     const {
         name,
         capital,
@@ -59,10 +58,10 @@ app.post('/regions', async (req, res) => {
         console.error('Error creating region:', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
-});
+};
 
 // update a region by id
-app.put('/regions/:id', async (req, res) => {
+export const UpdateRegionController = async (req, res) => {
     const { id } = req.params;
     const {
         areaKm2 } = req.body;
@@ -78,4 +77,4 @@ app.put('/regions/:id', async (req, res) => {
         console.error('Error updating region:', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
-});
+};
