@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "Region" ADD COLUMN     "population_density" DOUBLE PRECISION,
+ALTER COLUMN "population" SET DATA TYPE TEXT,
+ALTER COLUMN "latitude" SET DATA TYPE TEXT,
+ALTER COLUMN "longitude" SET DATA TYPE TEXT;
