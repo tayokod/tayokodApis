@@ -1,5 +1,7 @@
 import express from 'express';
 import cors from 'cors';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -7,6 +9,19 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
+
+// middleware to handle errors
+const authMiddleware = (req, res, next) => {
+  if (["POST", "PUT", "DELETE"].includes(req.method)) {
+    const apiKey = req.headers["x-api-key"];
+    if (apiKey !== process.env.API_KEY) {
+      return res.status(403).json({ error: "Forbidden. Invalid API key." });
+    }
+  }
+  next();
+};
+
+app.use(authMiddleware);
 
 // importing food routes
 import foodsRoutes from '../routes/foodsRoutes/foodsRoutes.js';

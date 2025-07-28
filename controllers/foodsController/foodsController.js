@@ -101,3 +101,26 @@ export const GetFoodByIdController = async (req, res) => {
     }
 }
 
+
+// search foods by category name
+export const searchFoodsByCategoryNameController = async (req, res) => {
+    const { categoryName } = req.params;
+
+    try {
+        const foods = await prisma.foods.findMany({
+            where: { category: { name: categoryName } },
+            include: {
+                category: true,
+            },
+        });
+
+        if (!foods.length) {
+            return res.status(404).json({ error: 'No foods found for this category' });
+        }
+
+        return res.json(foods);
+    } catch (error) {
+        console.error('Error fetching foods by category name:', error);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+}
