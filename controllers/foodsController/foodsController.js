@@ -21,25 +21,80 @@ const prisma = new PrismaClient();
 //   createdAt   DateTime @default(now())
 //   updatedAt   DateTime @updatedAt
 //   ingredients String[] @default([])
-  
+
 // }
 
 
 // // Get all foods
 export const GetFoodsController = async (req, res) => {
-    
     try {
+        const { category, name, price, minPrice, maxPrice, isAvailable, tags, rating } = req.query;
+
+
+        const filters = {};
+
+
+        if (category) {
+            filters.category = {
+                name: {
+                    contains: category,
+                    mode: 'insensitive',
+                },
+            };
+        }
+
+
+        if (name) {
+            filters.name = {
+                contains: name,
+                mode: 'insensitive',
+            };
+        }
+
+
+        if (price) {
+            filters.price = Number(price);
+        }
+
+
+        if (minPrice || maxPrice) {
+            filters.price = {};
+            if (minPrice) filters.price.gte = Number(minPrice);
+            if (maxPrice) filters.price.lte = Number(maxPrice);
+        }
+
+
+        if (isAvailable !== undefined) {
+            filters.isAvailable = isAvailable === 'true';
+        }
+
+
+        if (tags) {
+            filters.tags = {
+                hasSome: tags.split(','), // e.g. ?tags=spicy,vegan
+            };
+        }
+
+
+        if (rating) {
+            filters.rating = {
+                gte: Number(rating),
+            };
+        }
+
+
         const foods = await prisma.foods.findMany({
-            include: {
-                category: true,
-            },
+            where: filters,
+            include: { category: true },
         });
+
+
         res.json(foods);
     } catch (error) {
-        console.error('Error fetching foods:', error);
+        console.error('Error fetching foods with filters:', error);
         res.status(500).json({ error: 'Internal Server Error' });
-    } 
-}
+    }
+};
 
 // // Post a new food
 export const PostFoodsController = async (req, res) => {
@@ -124,3 +179,12 @@ export const searchFoodsByCategoryNameController = async (req, res) => {
         return res.status(500).json({ error: 'Internal server error' });
     }
 }
+
+
+// fetch('https://tayokodapi.online/api/products?category=Quraac')
+
+
+
+// fetch('https://tayokodapi.online/api/products?name=Canjeero')
+
+// fetch('https://tayokodapi.online/api/products?price=10')
