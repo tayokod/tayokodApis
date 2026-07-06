@@ -1,72 +1,33 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
- provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  // directUrl = env("DIRECT_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
-model Region {
-  id                Int      @id @default(autoincrement())
-  name              String   @unique
-  capital           String
-  population        String?
-  areaKm2           Float?   @map("area_km2")
-  populationDensity Float?   @map("population_density")
-  languages         String[] 
-  administrationType String   @map("administration_type")
-  latitude          String?
-  longitude         String?
-  flag              String?  
-  image             String?  
-  images            String[] 
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
-  zones            Zone[]   
-}
-
-model Zone {
-  id          Int      @id @default(autoincrement())
-  name        String   @unique
-  regionId    Int
-  region      Region   @relation(fields: [regionId], references: [id])
-  population  Int?
-  areaKm2     Float?   @map("area_km2")
-  latitude    Float?
-  longitude   Float?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-   @@unique([regionId, name])
-}
-
-
-model foods{
-  id          Int      @id @default(autoincrement())
-  name        String   @unique
+model foods {
+  id          Int         @id @default(autoincrement())
+  name        String      @unique
   description String?
   image       String?
   price       Float?
-  images     String[] @default([])
-  isAvailable Boolean  @default(true)
-  category     categories? @relation(fields: [categoryId], references: [id])
-  categoryId Int?
-  tags          String[]    @default([])
-  rating        Float       @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  ingredients String[] @default([])
-  
+  images      String[]    @default([])
+  isAvailable Boolean     @default(true)
+  category    categories? @relation(fields: [categoryId], references: [id])
+  categoryId  Int?
+  tags        String[]    @default([])
+  rating      Float       @default(0)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  ingredients String[]    @default([])
 }
 
-model categories{
+model categories {
   id          Int      @id @default(autoincrement())
   name        String   @unique
   description String?
@@ -74,7 +35,94 @@ model categories{
   image       String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  foods       foods[] 
+  foods       foods[]
 }
 
+model City {
+  id         Int      @id @default(autoincrement())
+  name       String   @unique
+  country    String?
+  population Int?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
 
+model Product {
+  id          Int      @id @default(autoincrement())
+  title       String   @unique
+  description String?
+  price       Float
+  image       String?
+  category    String
+  rating      Float    @default(0)
+  stock       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Student {
+  id        Int      @id @default(autoincrement())
+  fullName  String
+  className String
+  gender    String
+  city      String
+  email     String?  @unique
+  marks     Mark[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Mark {
+  id        Int      @id @default(autoincrement())
+  studentId Int
+  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  subject   String
+  score     Int
+  status    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Author {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  country   String
+  books     Book[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Book {
+  id            Int      @id @default(autoincrement())
+  title         String
+  genre         String
+  authorId      Int
+  author        Author   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  publishedYear Int
+  image         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Company {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  location  String
+  website   String?
+  jobs      Job[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Job {
+  id          Int      @id @default(autoincrement())
+  title       String
+  type        String
+  location    String
+  salary      Float?
+  companyId   Int
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

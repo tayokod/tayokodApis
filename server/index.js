@@ -2,6 +2,18 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { errorHandler } from '../lib/errors.js';
+
+import foodsRoutes from '../routes/foodsRoutes/foodsRoutes.js';
+import categoriesRoutes from '../routes/categoreisRoutes/categoriesRoute.js';
+import citiesRoutes from '../routes/citiesRoutes/citiesRoutes.js';
+import productsRoutes from '../routes/productsRoutes/productsRoutes.js';
+import studentsRoutes from '../routes/studentsRoutes/studentsRoutes.js';
+import marksRoutes from '../routes/marksRoutes/marksRoutes.js';
+import authorsRoutes from '../routes/authorsRoutes/authorsRoutes.js';
+import booksRoutes from '../routes/booksRoutes/booksRoutes.js';
+import companiesRoutes from '../routes/companiesRoutes/companiesRoutes.js';
+import jobsRoutes from '../routes/jobsRoutes/jobsRoutes.js';
+
 dotenv.config();
 
 const app = express();
@@ -28,24 +40,17 @@ const authMiddleware = (req, res, next) => {
 
 app.use(authMiddleware);
 
-// importing food routes
-import foodsRoutes from '../routes/foodsRoutes/foodsRoutes.js';
+// all resources live under /api
 app.use('/api', foodsRoutes);
-
-
-// importing categories routes
-import categoriesRoutes from '../routes/categoreisRoutes/categoriesRoute.js';
 app.use('/api', categoriesRoutes);
-
-
-// importing regions routes
-import regionsRoutes from '../routes/regionsRoutes/regionsRoute.js';
-app.use('/api', regionsRoutes);
-
-
-// importing zones routes
-import zonesRoutes from '../routes/zonesRoutes/zonesRoute.js';
-app.use('/api', zonesRoutes);
+app.use('/api', citiesRoutes);
+app.use('/api', productsRoutes);
+app.use('/api', studentsRoutes);
+app.use('/api', marksRoutes);
+app.use('/api', authorsRoutes);
+app.use('/api', booksRoutes);
+app.use('/api', companiesRoutes);
+app.use('/api', jobsRoutes);
 
 
 // unknown routes
