@@ -1,58 +1,47 @@
-import { PrismaClient } from '@prisma/client';
-const prisma = new PrismaClient();
-
-
-
-
+import prisma from '../../lib/prisma.js';
+import { ApiError } from '../../lib/errors.js';
+import { parseId, categoryCreateSchema, categoryUpdateSchema } from '../../lib/validate.js';
 
 // get all categories
 export const getCategories = async (req, res) => {
-  try {
-    const categories = await prisma.categories.findMany();
-    res.status(200).json(categories);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch categories' });
-  }
+  const categories = await prisma.categories.findMany();
+  res.status(200).json(categories);
 };
 
-
+// get a category by id
+export const getCategoryById = async (req, res) => {
+  const id = parseId(req.params.id);
+  const category = await prisma.categories.findUnique({
+    where: { id },
+    include: { foods: true },
+  });
+  if (!category) {
+    throw new ApiError(404, 'Category not found');
+  }
+  res.json(category);
+};
 
 // post a new category
 export const createCategory = async (req, res) => {
-    const { name , description, slug, image} = req.body;
-    try {
-        const newCategory = await prisma.categories.create({
-        data: { 
-            name,
-            description,
-            slug,
-            image,
-
-        },
-        });
-        res.status(201).json(newCategory);
-    } catch (error) {
-        res.status(500).json({ error: 'Failed to create category' });
-    }
-    }
+  const data = categoryCreateSchema.parse(req.body);
+  const newCategory = await prisma.categories.create({ data });
+  res.status(201).json(newCategory);
+};
 
 // update a category by id
 export const updateCategory = async (req, res) => {
-    const { id } = req.params;
-    const {image } = req.body;
-
-    try {
-        const updatedCategory = await prisma.categories.update({
-            where: { id: +id },
-            data: { 
-             
-                image,
-            },
-        });
-        res.status(200).json(updatedCategory);
-    } catch (error) {
-        res.status(500).json({ error: 'Failed to update category' });
-    }
+  const id = parseId(req.params.id);
+  const data = categoryUpdateSchema.parse(req.body);
+  const updatedCategory = await prisma.categories.update({
+    where: { id },
+    data,
+  });
+  res.status(200).json(updatedCategory);
 };
 
-
+// delete a category by id
+export const deleteCategory = async (req, res) => {
+  const id = parseId(req.params.id);
+  await prisma.categories.delete({ where: { id } });
+  res.status(204).send();
+};
