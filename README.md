@@ -62,6 +62,12 @@ The server refuses to start if `API_KEY` is missing.
 x-api-key: your-api-key
 ```
 
+## Static images
+
+Locally-hosted images are served from the `images/` folder at `/images/...`.
+For example, some book covers live at `/images/books/<name>.jpg`. Book `image`
+fields are either a full external cover URL or a local `/images/books/...` path.
+
 ## Common query features
 
 Most list endpoints support:

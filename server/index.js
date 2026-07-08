@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
 import { errorHandler } from '../lib/errors.js';
 
 import foodsRoutes from '../routes/foodsRoutes/foodsRoutes.js';
@@ -25,6 +26,9 @@ if (!process.env.API_KEY) {
 
 app.use(cors());
 app.use(express.json());
+
+// serve locally-hosted images (e.g. book covers) at /images/...
+app.use('/images', express.static(path.join(process.cwd(), 'images')));
 
 
 // require an API key for anything that isn't a read
