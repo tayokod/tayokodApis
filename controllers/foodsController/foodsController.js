@@ -1,5 +1,6 @@
 import prisma from '../../lib/prisma.js';
 import { ApiError } from '../../lib/errors.js';
+import { paginate, sortToOrderBy } from '../../lib/paginate.js';
 import { parseId, foodCreateSchema, foodUpdateSchema, foodsQuerySchema } from '../../lib/validate.js';
 
 // Get all foods with filters, sorting and pagination
@@ -59,45 +60,14 @@ export const GetFoodsController = async (req, res) => {
         };
     }
 
-    let orderBy;
-    if (sort) {
-        const desc = sort.startsWith('-');
-        orderBy = { [desc ? sort.slice(1) : sort]: desc ? 'desc' : 'asc' };
-    }
+    const orderBy = sortToOrderBy(sort);
 
-    // Without page/limit keep the original plain-array response
-    if (page === undefined && limit === undefined) {
-        const foods = await prisma.foods.findMany({
-            where: filters,
-            include: { category: true },
-            orderBy,
-        });
-        return res.json(foods);
-    }
-
-    const currentPage = page ?? 1;
-    const pageSize = limit ?? 20;
-
-    const [foods, total] = await Promise.all([
-        prisma.foods.findMany({
-            where: filters,
-            include: { category: true },
-            orderBy,
-            skip: (currentPage - 1) * pageSize,
-            take: pageSize,
-        }),
-        prisma.foods.count({ where: filters }),
-    ]);
-
-    res.json({
-        data: foods,
-        pagination: {
-            page: currentPage,
-            limit: pageSize,
-            total,
-            totalPages: Math.ceil(total / pageSize),
-        },
-    });
+    const result = await paginate(
+        prisma.foods,
+        { where: filters, include: { category: true }, orderBy },
+        { page, limit }
+    );
+    res.json(result);
 };
 
 // Post a new food

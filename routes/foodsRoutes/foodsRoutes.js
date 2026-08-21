@@ -22,7 +22,8 @@ router.get('/foods/category/:categoryName', searchFoodsByCategoryNameController)
 // get food by id
 router.get('/foods/:id', GetFoodByIdController);
 
-// update a food by id
+// update a food by id (PATCH is the correct verb for partial updates; PUT kept for backward compatibility)
+router.patch('/foods/:id', UpdateFoodController);
 router.put('/foods/:id', UpdateFoodController);
 
 // delete a food by id

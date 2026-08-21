@@ -5,7 +5,7 @@ import path from 'path';
 import { errorHandler } from '../lib/errors.js';
 
 import foodsRoutes from '../routes/foodsRoutes/foodsRoutes.js';
-import categoriesRoutes from '../routes/categoreisRoutes/categoriesRoute.js';
+import categoriesRoutes from '../routes/categoriesRoutes/categoriesRoutes.js';
 import citiesRoutes from '../routes/citiesRoutes/citiesRoutes.js';
 import productsRoutes from '../routes/productsRoutes/productsRoutes.js';
 import studentsRoutes from '../routes/studentsRoutes/studentsRoutes.js';
@@ -20,8 +20,17 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-if (!process.env.API_KEY) {
-  throw new Error('API_KEY environment variable is required');
+// Accept either API_KEYS (comma-separated) or a single API_KEY.
+// Build a Set of valid keys for O(1) lookup.
+const validKeys = new Set(
+  (process.env.API_KEYS ?? process.env.API_KEY ?? '')
+    .split(',')
+    .map((k) => k.trim())
+    .filter(Boolean)
+);
+
+if (validKeys.size === 0) {
+  throw new Error('At least one of API_KEY or API_KEYS environment variables is required');
 }
 
 app.use(cors());
@@ -35,7 +44,7 @@ app.use('/images', express.static(path.join(process.cwd(), 'images')));
 const authMiddleware = (req, res, next) => {
   if (!["GET", "HEAD", "OPTIONS"].includes(req.method)) {
     const apiKey = req.headers["x-api-key"];
-    if (apiKey !== process.env.API_KEY) {
+    if (!apiKey || !validKeys.has(apiKey)) {
       return res.status(403).json({ error: "Forbidden. Invalid API key." });
     }
   }

@@ -17,7 +17,8 @@ router.get('/categories/:id', getCategoryById);
 // Route to create a new category
 router.post('/categories', createCategory);
 
-// Route to update a category by id
+// Route to update a category by id (PATCH is the correct verb for partial updates; PUT kept for backward compatibility)
+router.patch('/categories/:id', updateCategory);
 router.put('/categories/:id', updateCategory);
 
 // Route to delete a category by id
